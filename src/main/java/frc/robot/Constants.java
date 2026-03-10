@@ -54,7 +54,7 @@ public final class Constants {
     public static final double INTAKING_FEEDER_ROLLER_SPEED = 0.65;
 
 
-    public static final double LAUNCH_MOTOR_SPEED = 0.4;
+    public static final double LAUNCH_MOTOR_SPEED = 0.70;
     public static final double SPIN_UP_SECONDS = 1;
 
   }
