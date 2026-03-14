@@ -53,6 +53,13 @@ public final class Constants {
     public static final double INTAKING_INTAKE_ROLLER_SPEED = -0.6;
     public static final double INTAKING_FEEDER_ROLLER_SPEED = 0.45;
 
+    // PID values
+    public static final double kP = 0.0002;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kFF = 0.00020;
+
+    public static final double shooterRPM = 4500;
 
     public static final double LAUNCH_MOTOR_SPEED = 0.70;
     public static final double SPIN_UP_SECONDS = 1;

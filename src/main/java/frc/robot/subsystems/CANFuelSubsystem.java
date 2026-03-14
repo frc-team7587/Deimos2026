@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -18,8 +19,11 @@ import static frc.robot.Constants.FuelConstants.*;
 import static frc.robot.Constants.OperatorConstants;
 
 public class CANFuelSubsystem extends SubsystemBase {
-  private final SparkMax feederRoller;
-  private final SparkMax intakeLauncherRoller;
+  public final SparkMax feederRoller;
+  public final SparkMax intakeLauncherRoller;
+  public final PIDController feederPIDController;
+  public final PIDController intakePIDController;
+
 
   /** Creates a new CANBallSubsystem. */
   public CANFuelSubsystem() {
@@ -41,6 +45,8 @@ public class CANFuelSubsystem extends SubsystemBase {
     launcherConfig.smartCurrentLimit(LAUNCHER_MOTOR_CURRENT_LIMIT);
     intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    feederPIDController = new PIDController(kP, kI, kD);
+    intakePIDController = new PIDController(kP, kI, kD); 
   
     // put default values for various fuel operations onto the dashboard
     // all commands using this subsystem pull values from the dashbaord to allow
@@ -70,8 +76,23 @@ public class CANFuelSubsystem extends SubsystemBase {
   public void run() {
 
     SmartDashboard.putNumber("Right Triger Axis", RobotContainer.operatorController.getRightTriggerAxis());
+
     feederRoller.set(RobotContainer.operatorController.getRightTriggerAxis() * LAUNCH_MOTOR_SPEED);
     intakeLauncherRoller.set(RobotContainer.operatorController.getRightTriggerAxis() * LAUNCH_MOTOR_SPEED);
+
+    /*
+    double feederVelocity = feederRoller.getEncoder().getVelocity();
+    double feederTargetSpeed = feederPIDController.calculate(feederVelocity, shooterRPM);
+
+    double intakeVelocity = intakeLauncherRoller.getEncoder().getVelocity();
+    double intakeTargetSpeed = intakePIDController.calculate(intakeVelocity, shooterRPM);
+
+    System.out.println("Intake RPM: " + intakeVelocity);
+    System.out.println("Feeder RPM: " + feederVelocity);
+
+    setFeederRoller(feederTargetSpeed);
+    setIntakeLauncherRoller(intakeTargetSpeed);
+    */
 
   }
   // A method to stop the rollers

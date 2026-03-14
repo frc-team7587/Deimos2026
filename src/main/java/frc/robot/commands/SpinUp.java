@@ -32,15 +32,26 @@ public class SpinUp extends Command {
   // command doesn't require updating any values while running
   @Override
   public void execute() {
+
+
     fuelSubsystem.setFeederRoller(LAUNCH_MOTOR_SPEED * RobotContainer.operatorController.getRightTriggerAxis());
     fuelSubsystem.setIntakeLauncherRoller(INTAKING_INTAKE_ROLLER_SPEED * RobotContainer.operatorController.getRightTriggerAxis());
+
+    /* 
+    double feederVelocity = fuelSubsystem.feederRoller.getEncoder().getVelocity();
+    double feederTargetSpeed = fuelSubsystem.feederPIDController.calculate(feederVelocity, shooterRPM);
+
+    fuelSubsystem.setFeederRoller(feederTargetSpeed);
+    */
+  
   }
 
   // Called once the command ends or is interrupted. Stop the rollers
   @Override
   public void end(boolean interrupted) {
+    if(interrupted){
     fuelSubsystem.setFeederRoller(0);
-    fuelSubsystem.setIntakeLauncherRoller(0);
+    fuelSubsystem.setIntakeLauncherRoller(0);}
   }
 
   // Returns true when the command should end.
