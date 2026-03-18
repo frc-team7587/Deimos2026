@@ -18,7 +18,7 @@ import frc.robot.RobotContainer;
 import static frc.robot.Constants.FuelConstants.*;
 import static frc.robot.Constants.OperatorConstants;
 
-public class CANFuelSubsystem extends SubsystemBase {
+public class Fuel extends SubsystemBase {
   public final SparkMax feederRoller;
   public final SparkMax intakeLauncherRoller;
   public final PIDController feederPIDController;
@@ -26,7 +26,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
 
   /** Creates a new CANBallSubsystem. */
-  public CANFuelSubsystem() {
+  public Fuel() {
     // create brushed motors for each of the motors on the launcher mechanism
     intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
     feederRoller = new SparkMax(FEEDER_MOTOR_ID, MotorType.kBrushless);

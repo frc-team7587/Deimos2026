@@ -15,8 +15,8 @@ import frc.robot.commands.ExampleAuto;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Launch;
 import frc.robot.commands.LaunchSequence;
-import frc.robot.subsystems.CANDriveSubsystem;
-import frc.robot.subsystems.CANFuelSubsystem;
+import frc.robot.subsystems.Fuel;
+import frc.robot.subsystems.drive.DiffDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -27,8 +27,8 @@ import frc.robot.subsystems.CANFuelSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final CANDriveSubsystem driveSubsystem = new CANDriveSubsystem();
-  private final CANFuelSubsystem fuelSubsystem = new CANFuelSubsystem();
+  private final Drive driveSubsystem = new Drive();
+  private final Fuel fuelSubsystem = new Fuel();
 
   // The driver's controller
   private final CommandXboxController driverController = new CommandXboxController(

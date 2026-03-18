@@ -7,16 +7,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.CANFuelSubsystem;
+import frc.robot.subsystems.Fuel;
 import static frc.robot.Constants.FuelConstants.*;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinUp extends Command {
   /** Creates a new Intake. */
 
-  CANFuelSubsystem fuelSubsystem;
+  Fuel fuelSubsystem;
 
-  public SpinUp(CANFuelSubsystem fuelSystem) {
+  public SpinUp(Fuel fuelSystem) {
     addRequirements(fuelSystem);
     this.fuelSubsystem = fuelSystem;
   }
