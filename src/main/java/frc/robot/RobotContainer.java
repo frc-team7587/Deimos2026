@@ -16,6 +16,8 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.Launch;
 import frc.robot.commands.LaunchSequence;
 import frc.robot.subsystems.Fuel;
+import frc.robot.subsystems.drive.DriveBase;
+import frc.robot.subsystems.drive.SwerveDrive;
 import frc.robot.subsystems.drive.DiffDrive;
 
 /**
@@ -27,7 +29,7 @@ import frc.robot.subsystems.drive.DiffDrive;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final Drive driveSubsystem = new Drive();
+  private final DriveBase driveSubsystem = new SwerveDrive();
   private final Fuel fuelSubsystem = new Fuel();
 
   // The driver's controller

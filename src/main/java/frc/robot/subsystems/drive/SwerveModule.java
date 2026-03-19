@@ -1,5 +1,8 @@
 package frc.robot.subsystems.drive;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -30,8 +33,8 @@ public class SwerveModule {
   private final SparkMax m_driveMotor;
   private final SparkMax m_turningMotor;
 
-  private final Encoder m_driveEncoder;
-  private final Encoder m_turningEncoder;
+  private final RelativeEncoder m_driveEncoder;
+  private final AbsoluteEncoder m_turningEncoder;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
@@ -60,27 +63,17 @@ public class SwerveModule {
    * @param turningEncoderChannelB DIO input for the turning encoder channel B
    */
   public SwerveModule(
-      int driveMotorChannel,
-      int turningMotorChannel,
+      int driveCANID,
+      int turningCANID,
       int driveEncoderChannelA,
       int driveEncoderChannelB,
       int turningEncoderChannelA,
       int turningEncoderChannelB) {
-    m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
-    m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
+    m_driveMotor = new SparkMax(driveCANID, MotorType.kBrushless);
+    m_turningMotor = new SparkMax(turningCANID, MotorType.kBrushless);
 
-    m_driveEncoder = new Encoder(driveEncoderChannelA, driveEncoderChannelB);
-    m_turningEncoder = new Encoder(turningEncoderChannelA, turningEncoderChannelB);
-
-    // Set the distance per pulse for the drive encoder. We can simply use the
-    // distance traveled for one rotation of the wheel divided by the encoder
-    // resolution.
-    m_driveEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
-
-    // Set the distance (in this case, angle) in radians per pulse for the turning encoder.
-    // This is the the angle through an entire rotation (2 * pi) divided by the
-    // encoder resolution.
-    m_turningEncoder.setDistancePerPulse(2 * Math.PI / kEncoderResolution);
+    m_driveEncoder = m_driveMotor.getEncoder();
+    m_turningEncoder = m_turningMotor.getAbsoluteEncoder();
 
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
@@ -94,7 +87,7 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.getDistance()));
+        m_driveEncoder.get(), new Rotation2d(m_turningEncoder.getDistance()));
   }
 
   /**
