@@ -1,86 +1,31 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean constants. This class should not be used for any other
- * purpose. All constants should be declared globally (i.e. public static). Do
- * not put anything functional in this class.
- *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the constants are needed, to reduce verbosity.
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
+ * (log replay from a file).
  */
 public final class Constants {
-  public static final class DriveConstants {
-    // Motor controller IDs for drivetrain motors
-    public static final int LEFT_LEADER_ID = 3;
-    public static final int LEFT_FOLLOWER_ID = 4;
-    public static final int RIGHT_LEADER_ID = 6;
-    public static final int RIGHT_FOLLOWER_ID = 5;
+  public static final Mode simMode = Mode.SIM;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-    // Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
-    // likelihood of tripping breakers or damaging CIM motors
-    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
-    public static final double kMaxSpeed = 3.0;
-    public static final double kMaxAngularSpeed = Math.PI;
-  }
+    /** Running a physics simulator. */
+    SIM,
 
-  public static final class FuelConstants {
-    // Motor controller IDs for Fuel Mechanism motors
-    public static final int FEEDER_MOTOR_ID = 1;
-    public static final int INTAKE_LAUNCHER_MOTOR_ID = 2;
-
-    // Current limit and nominal voltage for fuel mechanism motors.
-    public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
-    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 60;
-
-    // Voltage values for various fuel operations. These values may need to be tuned
-    // based on exact robot construction.
-    // See the Software Guide for tuning information
-    
-
-    /* old voltages
-    public static final double INTAKING_FEEDER_VOLTAGE = 10;
-    public static final double INTAKING_INTAKE_VOLTAGE = -12;
-    public static final double LAUNCHING_FEEDER_VOLTAGE = 11;
-    public static final double LAUNCHING_LAUNCHER_VOLTAGE = 12;
-    public static final double SPIN_UP_FEEDER_VOLTAGE = 6;
-    public static final double SPIN_UP_SECONDS = 1;
-    */
-
-    public static final double INTAKING_INTAKE_ROLLER_SPEED = -0.6;
-    public static final double INTAKING_FEEDER_ROLLER_SPEED = 0.45;
-
-    // PID values
-    public static final double kP = 0.0002;
-    public static final double kI = 0;
-    public static final double kD = 0;
-    public static final double kFF = 0.00020;
-
-    public static final double shooterRPM = 4500;
-
-    public static final double LAUNCH_MOTOR_SPEED = 0.70;
-    public static final double SPIN_UP_SECONDS = 1;
-
-  }
-
-  public static final class OperatorConstants {
-    // Port constants for driver and operator controllers. These should match the
-    // values in the Joystick tab of the Driver Station software
-    public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int OPERATOR_CONTROLLER_PORT = 1;
-
-    // This value is multiplied by the joystick value when rotating the robot to
-    // help avoid turning too fast and being difficult to control
-    public static final double DRIVE_SCALING = .7;
-    public static final double ROTATION_SCALING = .56;
-
-    
-    
+    /** Replaying from a log file. */
+    REPLAY
   }
 }
