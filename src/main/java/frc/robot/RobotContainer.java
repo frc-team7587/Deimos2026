@@ -35,7 +35,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final static boolean robotRelative = false;
+  public static boolean robotRelative = false;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -111,26 +111,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        DriveCommands.joystickDriveRobotRelative(
+        DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftX(),
             () -> -controller.getLeftY(),
-            () -> -controller.getRightY()));
+            () -> -controller.getLeftX(),
+            () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
+    // change from robot relative to field relativ e
     controller
         .a()
-        .onTrue(Commands.runOnce(() -> drive.setDefaultCommand(DriveCommands.joystickDriveRobotRelative(
-            drive,
-            () -> -controller.getLeftX(),
-            () -> -controller.getLeftY(),
-            () -> -controller.getRightY()))));
+        .onTrue(Commands.runOnce(() -> {  robotRelative = !robotRelative; }));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    /* 
+    
     controller
         .b()
         .onTrue(
@@ -140,15 +136,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-                */
-
-    controller
-        .b()
-        .onTrue(Commands.runOnce(() -> drive.setDefaultCommand(DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftX(),
-            () -> -controller.getLeftY(),
-            () -> -controller.getRightY()))));
                 
   }
 

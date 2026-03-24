@@ -30,7 +30,6 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     // Record metadata
-    /* 
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -43,7 +42,6 @@ public class Robot extends LoggedRobot {
           case 1 -> "Uncommitted changes";
           default -> "Unknown";
         });
-        */
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
