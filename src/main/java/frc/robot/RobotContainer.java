@@ -20,7 +20,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
@@ -120,13 +119,17 @@ public class RobotContainer {
     // change from robot relative to field relativ e
     controller
         .a()
-        .onTrue(Commands.runOnce(() -> {  robotRelative = !robotRelative; }));
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  robotRelative = !robotRelative;
+                }));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    
+
     controller
         .b()
         .onTrue(
@@ -136,7 +139,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-                
   }
 
   /**
