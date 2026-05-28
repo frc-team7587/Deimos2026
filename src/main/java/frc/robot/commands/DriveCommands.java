@@ -90,21 +90,26 @@ public class DriveCommands {
                   && DriverStation.getAlliance().get() == Alliance.Red;
 
           if (RobotContainer.robotRelative) drive.runVelocity(speeds);
-          else
-            drive.runVelocity(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    speeds,
-                    isFlipped
-                        ? drive.getRotation().plus(new Rotation2d(Math.PI))
+          else               
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped 
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+        },
+        drive);
+  }
+
+    /**
+
                         : drive.getRotation()));
         },
         drive);
   }
 
   /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   */
-  public static Command joystickDriveRobotRelative(
+ Command joystickDriveRobotRelative(
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
