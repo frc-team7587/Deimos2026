@@ -90,60 +90,40 @@ public class DriveCommands {
                   && DriverStation.getAlliance().get() == Alliance.Red;
 
           if (RobotContainer.robotRelative) drive.runVelocity(speeds);
-          else               
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped 
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
-        },
-        drive);
-  }
-
-    /**
-
+          else
+            drive.runVelocity(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                    speeds,
+                    isFlipped
+                        ? drive.getRotation().plus(new Rotation2d(Math.PI))
                         : drive.getRotation()));
         },
         drive);
   }
 
   /**
- Command joystickDriveRobotRelative(
-      Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
-    return Commands.run(
-        () -> {
-          // Get linear velocity
-          Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-
-          // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
-
-          // Square rotation value for more precise control
-          omega = Math.copySign(omega * omega, omega);
-
-          // Convert to field relative speeds & send command
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(speeds);
-        },
-        drive);
-  }
-
-  /**
-   * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-   * absolute rotation with a joystick.
+   * : drive.getRotation())); }, drive); }
+   *
+   * <p>/** Command joystickDriveRobotRelative( Drive drive, DoubleSupplier xSupplier,
+   * DoubleSupplier ySupplier, DoubleSupplier omegaSupplier) { return Commands.run( () -> { // Get
+   * linear velocity Translation2d linearVelocity =
+   * getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+   *
+   * <p>// Apply rotation deadband double omega =
+   * MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+   *
+   * <p>// Square rotation value for more precise control omega = Math.copySign(omega * omega,
+   * omega);
+   *
+   * <p>// Convert to field relative speeds & send command ChassisSpeeds speeds = new ChassisSpeeds(
+   * linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(), linearVelocity.getY() *
+   * drive.getMaxLinearSpeedMetersPerSec(), omega * drive.getMaxAngularSpeedRadPerSec()); boolean
+   * isFlipped = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() ==
+   * Alliance.Red; drive.runVelocity(speeds); }, drive); }
+   *
+   * <p>/** Field relative drive command using joystick for linear control and PID for angular
+   * control. Possible use cases include snapping to an angle, aiming at a vision target, or
+   * controlling absolute rotation with a joystick.
    */
   public static Command joystickDriveAtAngle(
       Drive drive,

@@ -38,14 +38,14 @@ public class DriveConstants {
   public static final int pigeonCanId = 9;
 
   public static final int frontLeftDriveCanId = 2;
-  public static final int backLeftDriveCanId = 4;
-  public static final int frontRightDriveCanId = 1;
-  public static final int backRightDriveCanId = 3;
+  public static final int frontRightDriveCanId = 4;
+  public static final int backRightDriveCanId = 6;
+  public static final int backLeftDriveCanId = 8;
 
-  public static final int frontLeftTurnCanId = 6;
-  public static final int backLeftTurnCanId = 8;
+  public static final int frontLeftTurnCanId = 3;
   public static final int frontRightTurnCanId = 5;
   public static final int backRightTurnCanId = 7;
+  public static final int backLeftTurnCanId = 9;
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
