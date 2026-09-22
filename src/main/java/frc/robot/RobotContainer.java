@@ -159,6 +159,14 @@ public class RobotContainer {
     controller.leftTrigger().whileTrue(feeder.feedCommand());
     controller.rightTrigger().whileTrue(shooter.shootCommand());
 
+    controller.leftBumper().whileTrue(floor.forwardCommand());
+    controller.rightBumper().whileTrue(floor.reverseCommand());
+
+    controller.povLeft().whileTrue(intake.intakeCommand());
+    controller.povRight().whileTrue(intake.outtakeCommand());
+    controller.povDown().whileTrue(intake.pivotDownCommand());
+    controller.povUp().whileTrue(intake.pivotUpCommand());
+
     // Reset gyro to 0° when B button is pressed
 
     controller

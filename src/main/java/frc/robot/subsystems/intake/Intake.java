@@ -3,12 +3,15 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private final Subsystem rollerRequirement = new Subsystem() {};
+  private final Subsystem pivotRequirement = new Subsystem() {};
   private double pivotTargetDegrees = IntakeConstants.pivotMinAngleDegrees;
 
   public Intake(IntakeIO io) {
@@ -32,15 +35,16 @@ public class Intake extends SubsystemBase {
   }
 
   public Command pivotUpCommand() {
-    return Commands.run(() -> adjustPivotTarget(-1.0), this);
+    return Commands.run(() -> adjustPivotTarget(-1.0), pivotRequirement);
   }
 
   public Command pivotDownCommand() {
-    return Commands.run(() -> adjustPivotTarget(1.0), this);
+    return Commands.run(() -> adjustPivotTarget(1.0), pivotRequirement);
   }
 
   private Command runRollersCommand(double speed) {
-    return Commands.runEnd(() -> io.setRollerSpeed(speed), io::stopRollers, this);
+    return Commands.runEnd(
+        () -> io.setRollerSpeed(speed), io::stopRollers, rollerRequirement);
   }
 
   private void adjustPivotTarget(double direction) {
