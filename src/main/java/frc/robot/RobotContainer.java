@@ -23,6 +23,18 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOSpark;
+import frc.robot.subsystems.floor.Floor;
+import frc.robot.subsystems.floor.FloorIO;
+import frc.robot.subsystems.floor.FloorIOSpark;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -34,6 +46,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Feeder feeder;
+  private final Shooter shooter;
+  private final Floor floor;
+  private final Intake intake;
   public static boolean robotRelative = false;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -53,6 +69,10 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
+        feeder = new Feeder(new FeederIOSpark());
+        shooter = new Shooter(new ShooterIOSpark());
+        floor = new Floor(new FloorIOSpark());
+        intake = new Intake(new IntakeIOSpark());
         break;
 
       case SIM:
@@ -64,6 +84,10 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        feeder = new Feeder(new FeederIO() {});
+        shooter = new Shooter(new ShooterIO() {});
+        floor = new Floor(new FloorIO() {});
+        intake = new Intake(new IntakeIO() {});
         break;
 
       default:
@@ -75,6 +99,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        feeder = new Feeder(new FeederIO() {});
+        shooter = new Shooter(new ShooterIO() {});
+        floor = new Floor(new FloorIO() {});
+        intake = new Intake(new IntakeIO() {});
         break;
     }
 
@@ -127,6 +155,9 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller.leftTrigger().whileTrue(feeder.feedCommand());
+    controller.rightTrigger().whileTrue(shooter.shootCommand());
 
     // Reset gyro to 0° when B button is pressed
 
