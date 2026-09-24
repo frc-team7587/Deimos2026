@@ -1,7 +1,7 @@
 package frc.robot.subsystems.floor;
 
 public final class FloorConstants {
-  public static final int motorCanId = 14;
+  public static final int motorCanId = 12;
 
   // Tune these after confirming the motor's installed direction.
   public static final double forwardSpeed = 1.0;

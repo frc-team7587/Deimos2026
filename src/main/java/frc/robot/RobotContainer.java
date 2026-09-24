@@ -29,9 +29,10 @@ import frc.robot.subsystems.feeder.FeederIOSpark;
 import frc.robot.subsystems.floor.Floor;
 import frc.robot.subsystems.floor.FloorIO;
 import frc.robot.subsystems.floor.FloorIOSpark;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.intake.IntakePivot.IntakePivot;
+import frc.robot.subsystems.intake.IntakePivot.IntakePivotIO;
+import frc.robot.subsystems.intake.IntakePivot.IntakePivotIOSim;
+import frc.robot.subsystems.intake.IntakePivot.IntakePivotIOSpark;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSpark;
@@ -49,7 +50,7 @@ public class RobotContainer {
   private final Feeder feeder;
   private final Shooter shooter;
   private final Floor floor;
-  private final Intake intake;
+  private final IntakePivot intakePivot;
   public static boolean robotRelative = false;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -72,7 +73,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOSpark());
         shooter = new Shooter(new ShooterIOSpark());
         floor = new Floor(new FloorIOSpark());
-        intake = new Intake(new IntakeIOSpark());
+        intakePivot = new IntakePivot(new IntakePivotIOSpark());
         break;
 
       case SIM:
@@ -87,7 +88,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIO() {});
         shooter = new Shooter(new ShooterIO() {});
         floor = new Floor(new FloorIO() {});
-        intake = new Intake(new IntakeIO() {});
+        intakePivot = new IntakePivot(new IntakePivotIOSim());
         break;
 
       default:
@@ -102,7 +103,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIO() {});
         shooter = new Shooter(new ShooterIO() {});
         floor = new Floor(new FloorIO() {});
-        intake = new Intake(new IntakeIO() {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
         break;
     }
 
@@ -162,10 +163,8 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(floor.forwardCommand());
     controller.rightBumper().whileTrue(floor.reverseCommand());
 
-    controller.povLeft().whileTrue(intake.intakeCommand());
-    controller.povRight().whileTrue(intake.outtakeCommand());
-    controller.povDown().whileTrue(intake.pivotDownCommand());
-    controller.povUp().whileTrue(intake.pivotUpCommand());
+    controller.povDown().whileTrue(intakePivot.turntoDown());
+    controller.povUp().whileTrue(intakePivot.turntoUp());
 
     // Reset gyro to 0° when B button is pressed
 
