@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -51,9 +52,10 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Floor floor;
   private final IntakePivot intakePivot;
-  public static boolean robotRelative = false;
+  public static boolean robotRelative = true;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private static final double driverTurnScale = 0.7;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -141,9 +143,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -MathUtil.applyDeadband(controller.getLeftY(), 0.05),
+            () -> -MathUtil.applyDeadband(controller.getLeftX(), 0.05),
+            () -> -MathUtil.applyDeadband(driverTurnScale * controller.getRightX(), 0.05)));
 
     // change from robot relative to field relativ e
     controller
