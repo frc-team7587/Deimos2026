@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.IntakePivot;
+package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -8,7 +8,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
-public class IntakePivotIOSim implements IntakePivotIO {
+public class IntakeIOSim implements IntakeIO {
   private final DCMotor m_armGearbox = DCMotor.getNEO(2);
   private final ArmFeedforward feedforward = new ArmFeedforward(0, 0.0, 4);
   private final PIDController controller = new PIDController(10, 0, 0);
@@ -27,6 +27,11 @@ public class IntakePivotIOSim implements IntakePivotIO {
           1.57, // max angle in radians
           false,
           0);
+
+  @Override
+  public void updateInputs(IntakeIOInputs inputs) {
+    inputs.pivotPosition = getPivotPosition();
+  }
 
   @Override
   public void setPivotSpeed(double speed) {

@@ -28,12 +28,13 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOSpark;
 import frc.robot.subsystems.floor.Floor;
+import frc.robot.subsystems.floor.FloorConstants;
 import frc.robot.subsystems.floor.FloorIO;
 import frc.robot.subsystems.floor.FloorIOSpark;
-import frc.robot.subsystems.intake.IntakePivot.IntakePivot;
-import frc.robot.subsystems.intake.IntakePivot.IntakePivotIO;
-import frc.robot.subsystems.intake.IntakePivot.IntakePivotIOSim;
-import frc.robot.subsystems.intake.IntakePivot.IntakePivotIOSpark;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSpark;
@@ -51,7 +52,10 @@ public class RobotContainer {
   private final Feeder feeder;
   private final Shooter shooter;
   private final Floor floor;
-  private final IntakePivot intakePivot;
+  private final Intake intake;
+  private boolean floorReverseHeld = false;
+  private boolean floorForwardHeld = false;
+  private boolean floorReversePressedMostRecently = false;
   public static boolean robotRelative = true;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -75,7 +79,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOSpark());
         shooter = new Shooter(new ShooterIOSpark());
         floor = new Floor(new FloorIOSpark());
-        intakePivot = new IntakePivot(new IntakePivotIOSpark());
+        intake = new Intake(new IntakeIOSpark());
         break;
 
       case SIM:
@@ -90,7 +94,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIO() {});
         shooter = new Shooter(new ShooterIO() {});
         floor = new Floor(new FloorIO() {});
-        intakePivot = new IntakePivot(new IntakePivotIOSim());
+        intake = new Intake(new IntakeIOSim());
         break;
 
       default:
@@ -105,7 +109,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIO() {});
         shooter = new Shooter(new ShooterIO() {});
         floor = new Floor(new FloorIO() {});
-        intakePivot = new IntakePivot(new IntakePivotIO() {});
+        intake = new Intake(new IntakeIO() {});
         break;
     }
 
@@ -159,14 +163,52 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.leftTrigger().whileTrue(feeder.feedCommand());
-    controller.rightTrigger().whileTrue(shooter.shootCommand());
+    controller
+        .rightTrigger()
+        .whileTrue(
+            Commands.parallel(
+                shooter.shootCommand(),
+                Commands.waitSeconds(1.0).andThen(feeder.feedCommand())));
 
-    controller.leftBumper().whileTrue(floor.forwardCommand());
-    controller.rightBumper().whileTrue(floor.reverseCommand());
+    controller
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  floorReverseHeld = true;
+                  floorReversePressedMostRecently = true;
+                }))
+        .onFalse(Commands.runOnce(() -> floorReverseHeld = false));
+    controller
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  floorForwardHeld = true;
+                  floorReversePressedMostRecently = false;
+                }))
+        .onFalse(Commands.runOnce(() -> floorForwardHeld = false));
+    floor.setDefaultCommand(
+        floor.speedCommand(
+            () -> {
+              if (floorReverseHeld && floorForwardHeld) {
+                return floorReversePressedMostRecently
+                    ? FloorConstants.reverseSpeed
+                    : FloorConstants.forwardSpeed;
+              }
+              if (floorReverseHeld) {
+                return FloorConstants.reverseSpeed;
+              }
+              if (floorForwardHeld) {
+                return FloorConstants.forwardSpeed;
+              }
+              return 0.0;
+            }));
 
-    controller.povDown().whileTrue(intakePivot.turntoDown());
-    controller.povUp().whileTrue(intakePivot.turntoUp());
+    controller.povLeft().whileTrue(intake.intakeCommand());
+    controller.povRight().whileTrue(intake.outtakeCommand());
+    controller.povDown().whileTrue(intake.pivotDownCommand());
+    controller.povUp().whileTrue(intake.pivotUpCommand());
 
     // Reset gyro to 0° when B button is pressed
 

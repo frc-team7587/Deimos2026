@@ -3,6 +3,7 @@ package frc.robot.subsystems.floor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Floor extends SubsystemBase {
@@ -25,6 +26,10 @@ public class Floor extends SubsystemBase {
 
   public Command reverseCommand() {
     return runAtSpeedCommand(FloorConstants.reverseSpeed);
+  }
+
+  public Command speedCommand(DoubleSupplier speedSupplier) {
+    return Commands.runEnd(() -> io.setSpeed(speedSupplier.getAsDouble()), io::stop, this);
   }
 
   private Command runAtSpeedCommand(double speed) {

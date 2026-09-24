@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.IntakePivot;
+package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -7,6 +7,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
@@ -14,8 +16,11 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
-public class IntakePivot extends SubsystemBase {
-  private final IntakePivotIO pivot;
+public class Intake extends SubsystemBase {
+  private final IntakeIO io;
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private final Subsystem rollerRequirement = new Subsystem() {};
+  private final Subsystem pivotRequirement = new Subsystem() {};
   private final SysIdRoutine pivotSysId;
 
   private final LoggedMechanism2d mechPanel;
@@ -24,8 +29,8 @@ public class IntakePivot extends SubsystemBase {
   private final LoggedMechanismRoot2d mechIntakeRoot;
   private final LoggedMechanismLigament2d mechIntake;
 
-  public IntakePivot(IntakePivotIO pivot) {
-    this.pivot = pivot;
+  public Intake(IntakeIO io) {
+    this.io = io;
     pivotSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -34,7 +39,7 @@ public class IntakePivot extends SubsystemBase {
                 null,
                 (state) -> Logger.recordOutput("Intake/PivotSysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
-                (voltage) -> pivot.setPivotVoltage(voltage.in(Volts)), null, this));
+                (voltage) -> io.setPivotVoltage(voltage.in(Volts)), null, pivotRequirement));
 
     mechPanel =
         new LoggedMechanism2d(
@@ -54,19 +59,33 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public Command setPivotPosition(double position) {
-    return run(() -> pivot.setPivotPosition(position));
+    return Commands.run(() -> io.setPivotPosition(position), pivotRequirement);
   }
 
-  public Command turntoUp() {
-    return startEnd(
-        () -> pivot.setPivotSpeed(IntakePivotConstants.kPivotSpeedUp),
-        () -> pivot.setPivotPosition(pivot.getPivotPosition())); // this really has to be fixed
+  public Command intakeCommand() {
+    return runRollersCommand(IntakeConstants.intakeSpeed);
   }
 
-  public Command turntoDown() {
-    return startEnd(
-        () -> pivot.setPivotSpeed(IntakePivotConstants.kPivotSpeedDown),
-        () -> pivot.setPivotPosition(pivot.getPivotPosition())); // this really has to be fixed
+  public Command outtakeCommand() {
+    return runRollersCommand(IntakeConstants.outtakeSpeed);
+  }
+
+  public Command pivotUpCommand() {
+    return Commands.startEnd(
+        () -> io.setPivotSpeed(IntakeConstants.kPivotSpeedUp),
+        () -> io.setPivotPosition(io.getPivotPosition()),
+        pivotRequirement);
+  }
+
+  public Command pivotDownCommand() {
+    return Commands.startEnd(
+        () -> io.setPivotSpeed(IntakeConstants.kPivotSpeedDown),
+        () -> io.setPivotPosition(io.getPivotPosition()),
+        pivotRequirement);
+  }
+
+  private Command runRollersCommand(double speed) {
+    return Commands.runEnd(() -> io.setRollerSpeed(speed), io::stopRollers, rollerRequirement);
   }
 
   public Command pivotSysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -79,9 +98,10 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
     Logger.recordOutput("intakeMech", mechPanel);
-    Logger.recordOutput("Intake/PivotPosition", pivot.getPivotPosition());
     // turns encoder position to degrees
-    mechIntake.setAngle(new Rotation2d(pivot.getPivotPosition() - 90.0));
+    mechIntake.setAngle(new Rotation2d(inputs.pivotPosition - 90.0));
   }
 }

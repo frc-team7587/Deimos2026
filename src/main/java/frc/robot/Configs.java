@@ -4,7 +4,7 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import frc.robot.subsystems.intake.IntakePivot.IntakePivotConstants;
+import frc.robot.subsystems.intake.IntakeConstants;
 
 public class Configs {
   public static final class IntakeConfig {
@@ -22,14 +22,14 @@ public class Configs {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pidf(
-              IntakePivotConstants.kP,
-              IntakePivotConstants.kI,
-              IntakePivotConstants.kD,
-              IntakePivotConstants.kFF)
-          .outputRange(IntakePivotConstants.kMinOutput, IntakePivotConstants.kMaxOutput);
+              IntakeConstants.kP,
+              IntakeConstants.kI,
+              IntakeConstants.kD,
+              IntakeConstants.kFF)
+          .outputRange(IntakeConstants.kMinOutput, IntakeConstants.kMaxOutput);
       pivotMotorFollowerConfig
           .apply(pivotMotorLeaderConfig)
-          .follow(IntakePivotConstants.kLeaderID, true);
+          .follow(IntakeConstants.kLeaderID, true);
     }
   }
 }
