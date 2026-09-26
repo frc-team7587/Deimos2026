@@ -7,11 +7,11 @@ public class IntakeConstants {
   public static final int kFollowerID = 16;
 
   public static final boolean rightRollerInverted = true;
-  public static final double intakeSpeed = 1.0;
-  public static final double outtakeSpeed = -1.0;
+  public static final double intakeSpeed = 0.3;
+  public static final double outtakeSpeed = -0.3;
 
-  public static final double kPivotSpeedDown = 0.12;
-  public static final double kPivotSpeedUp = -0.18;
+  public static final double kPivotSpeedDown = 0.26;
+  public static final double kPivotSpeedUp = -0.6;
 
   public static final double kP = 0.07;
   public static final double kI = 0.0;

@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,9 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     this.io = io;
+
+    SmartDashboard.putNumber("Intake/PivotPosition", io.getPivotPosition());
+
     pivotSysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -71,6 +75,8 @@ public class Intake extends SubsystemBase {
   }
 
   public Command pivotUpCommand() {
+    SmartDashboard.putNumber("Intake/PivotPosition", io.getPivotPosition());
+
     return Commands.startEnd(
         () -> io.setPivotSpeed(IntakeConstants.kPivotSpeedUp),
         () -> io.setPivotPosition(io.getPivotPosition()),
@@ -78,6 +84,8 @@ public class Intake extends SubsystemBase {
   }
 
   public Command pivotDownCommand() {
+    SmartDashboard.putNumber("Intake/PivotPosition", io.getPivotPosition());
+
     return Commands.startEnd(
         () -> io.setPivotSpeed(IntakeConstants.kPivotSpeedDown),
         () -> io.setPivotPosition(io.getPivotPosition()),

@@ -117,6 +117,12 @@ public class ModuleIOSpark implements ModuleIO {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
+
+    if (driveSpark.getDeviceId() == frontRightDriveCanId
+        || driveSpark.getDeviceId() == backRightDriveCanId) {
+      driveConfig.inverted(true);
+    }
+
     tryUntilOk(
         driveSpark,
         5,

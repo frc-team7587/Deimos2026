@@ -11,11 +11,14 @@ public interface ShooterIO {
     public double rightAppliedVolts = 0.0;
     public double leftCurrentAmps = 0.0;
     public double rightCurrentAmps = 0.0;
+    public double leftVelocityRpm = 0.0;
+    public double rightVelocityRpm = 0.0;
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void setSpeed(double speed) {}
+  /** Sets the signed shooter-wheel velocity in RPM. */
+  public default void setVelocityRpm(double rpm) {}
 
   public default void stop() {}
 }

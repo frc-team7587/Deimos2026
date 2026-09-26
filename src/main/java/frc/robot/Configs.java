@@ -21,11 +21,7 @@ public class Configs {
       pivotMotorLeaderConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pidf(
-              IntakeConstants.kP,
-              IntakeConstants.kI,
-              IntakeConstants.kD,
-              IntakeConstants.kFF)
+          .pidf(IntakeConstants.kP, IntakeConstants.kI, IntakeConstants.kD, IntakeConstants.kFF)
           .outputRange(IntakeConstants.kMinOutput, IntakeConstants.kMaxOutput);
       pivotMotorFollowerConfig
           .apply(pivotMotorLeaderConfig)

@@ -12,7 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -56,9 +56,12 @@ public class RobotContainer {
   private boolean floorReverseHeld = false;
   private boolean floorForwardHeld = false;
   private boolean floorReversePressedMostRecently = false;
+  private boolean useDashboardRpm = false;
   public static boolean robotRelative = true;
-  // Controller
+  // controllerOperator
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controllerOperator = new CommandXboxController(1);
+
   private static final double driverTurnScale = 0.7;
 
   // Dashboard inputs
@@ -113,6 +116,8 @@ public class RobotContainer {
         break;
     }
 
+    SmartDashboard.putBoolean("Shot/UseDashboardRpm", useDashboardRpm);
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -139,8 +144,8 @@ public class RobotContainer {
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * edu.wpi.first.wpilibj.Joystick} or {@link CommandXboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
@@ -152,7 +157,7 @@ public class RobotContainer {
             () -> -MathUtil.applyDeadband(driverTurnScale * controller.getRightX(), 0.05)));
 
     // change from robot relative to field relativ e
-    controller
+    controllerOperator
         .a()
         .onTrue(
             Commands.runOnce(
@@ -161,16 +166,35 @@ public class RobotContainer {
                 }));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controllerOperator.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
+    controllerOperator
         .rightTrigger()
+        .and(controllerOperator.x().negate())
         .whileTrue(
             Commands.parallel(
-                shooter.shootCommand(),
-                Commands.waitSeconds(1.0).andThen(feeder.feedCommand())));
+                shooter.shootCommand(() -> useDashboardRpm),
+                Commands.waitSeconds(1.0).andThen(feeder.feedCommand(() -> useDashboardRpm))));
 
-    controller
+    controllerOperator
+        .rightTrigger()
+        .and(controllerOperator.x())
+        .whileTrue(
+            Commands.parallel(
+                shooter.shootCommandTypeShi(
+                    () -> useDashboardRpm, controllerOperator.getRightTriggerAxis()),
+                Commands.waitSeconds(1.0).andThen(feeder.feedCommand(() -> useDashboardRpm))));
+
+    controllerOperator
+        .y()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  useDashboardRpm = !useDashboardRpm;
+                  SmartDashboard.putBoolean("Shot/UseDashboardRpm", useDashboardRpm);
+                }));
+
+    controllerOperator
         .leftBumper()
         .onTrue(
             Commands.runOnce(
@@ -179,7 +203,7 @@ public class RobotContainer {
                   floorReversePressedMostRecently = true;
                 }))
         .onFalse(Commands.runOnce(() -> floorReverseHeld = false));
-    controller
+    controllerOperator
         .rightBumper()
         .onTrue(
             Commands.runOnce(
@@ -205,14 +229,14 @@ public class RobotContainer {
               return 0.0;
             }));
 
-    controller.povLeft().whileTrue(intake.intakeCommand());
-    controller.povRight().whileTrue(intake.outtakeCommand());
-    controller.povDown().whileTrue(intake.pivotDownCommand());
-    controller.povUp().whileTrue(intake.pivotUpCommand());
+    controllerOperator.povLeft().whileTrue(intake.intakeCommand());
+    controllerOperator.povRight().whileTrue(intake.outtakeCommand());
+    controllerOperator.povDown().whileTrue(intake.pivotDownCommand());
+    controllerOperator.povUp().whileTrue(intake.pivotUpCommand());
 
     // Reset gyro to 0° when B button is pressed
 
-    controller
+    controllerOperator
         .b()
         .onTrue(
             Commands.runOnce(
